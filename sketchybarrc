@@ -1,0 +1,91 @@
+
+
+PLUGIN_DIR="$HOME/.config/sketchybar/plugins"
+
+##### Bar Appearance #####
+
+sketchybar --bar height=31        \
+                 margin=7        \
+                 position=top     \
+                 sticky=off       \
+                 y_offset=2     \
+                 padding_left=10  \
+                 padding_right=10 \
+                 corner_radius=11 \
+                 color=0xff32302f  \
+
+
+
+
+sketchybar --default icon.font="Hack Nerd Font:Bold:17.0"  \
+                     label.font="Hack Nerd Font:Bold:14.0" \
+                     padding_left=5                        \
+                     padding_right=5                       \
+                     label.padding_left=4                  \
+                     label.padding_right=4                 \
+                     icon.padding_left=4                   \
+                     icon.padding_right=4
+
+SPACE_ICONS=("1" "2" "3" "4" "5" "6" "7" "8" "9" "10")
+
+for i in "${!SPACE_ICONS[@]}"
+do
+  sid=$(($i+1))
+  sketchybar --add space space.$sid left                                 \
+             --set space.$sid associated_space=$sid                      \
+                              icon=${SPACE_ICONS[i]}                     \
+                              background.color=00xffdff883                \
+                              icon.color=0xfffb4934                \
+                              background.corner_radius=5                 \
+                              background.height=20                       \
+                              background.drawing=off                     \
+                              label.drawing=off                          \
+                              script="$PLUGIN_DIR/space.sh"              \
+                              click_script="yabai -m space --focus $sid"
+done
+
+
+
+sketchybar --add item space_separator left                         \
+           --set space_separator icon=                            \
+                                 padding_left=10                   \
+                                 padding_right=10                  \
+                                 label.drawing=off                 \
+                                 icon.color=0xfffb4934                \
+                                                                   \
+           --add item front_app left                               \
+           --set front_app       script="$PLUGIN_DIR/front_app.sh" \
+                                 icon.drawing=off                  \
+                                 label.color=0xfffb4934             \
+           --subscribe front_app front_app_switched
+
+
+sketchybar --add item clock right                              \
+           --set clock   update_freq=10                        \
+                         icon=                                \
+                         script="$PLUGIN_DIR/clock.sh"         \
+                         icon.color=0xfffe8019                 \
+                         label.color=0xfffe8019                    \
+                                                               \
+           --add item wifi right                               \
+           --set wifi    script="$PLUGIN_DIR/wifi.sh"          \
+                         icon=直                                \
+                         icon.color=0xffd3869b                  \
+                         label.color=0xffd3869b                    \
+           --subscribe wifi wifi_change                        \
+                                                               \
+           --add item volume right                             \
+           --set volume  script="$PLUGIN_DIR/volume.sh"        \                         icon.color=0xfffabd2f                   \
+                         label.color=0xfffabd2f                   \
+           --subscribe volume volume_change                    \
+                                                               \
+           --add item battery right                            \
+           --set battery script="$PLUGIN_DIR/battery.sh"       \
+                         update_freq=120                       \
+                         icon.color=0xffb8bb26                 \
+                         label.color=0xffb8bb26                 \
+           --subscribe battery system_woke power_source_change
+
+
+
+sketchybar --update
